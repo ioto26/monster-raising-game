@@ -1,0 +1,86 @@
+{
+    "スライム": {
+        "max_hp": 100,
+        "max_mp": 50,
+        "physical_attack": 20,
+        "physical_defense": 10,
+        "magic_attack": 25,
+        "magic_defense": 10,
+        "speed": 15,
+        "enemy_exp": 20,
+        "enemy_gold": 15,
+        "scout_rate": 0.1,
+        "growth_rate": {
+            "HP": 1.2,
+            "MP": 1.1,
+            "Physical_Attack": 1.1,
+            "Physical_Defense": 1.1,
+            "Magic_Attack": 1.1,
+            "Magic_Defense": 1.1,
+            "Speed": 1.1
+        }
+    },
+    "ゴブリン": {
+        "max_hp": 70,
+        "max_mp": 10,
+        "physical_attack": 30,
+        "physical_defense": 15,
+        "magic_attack": 5,
+        "magic_defense": 5,
+        "speed": 10,
+        "enemy_exp": 30,
+        "enemy_gold": 20,
+        "scout_rate": 0.08,
+        "growth_rate": {
+            "HP": 1.3,
+            "MP": 1.05,
+            "Physical_Attack": 1.2,
+            "Physical_Defense": 1.1,
+            "Magic_Attack": 1.0,
+            "Magic_Defense": 1.0,
+            "Speed": 1.1
+        }
+    },
+    "オオカミ": {
+        "max_hp": 60,
+        "max_mp": 5,
+        "physical_attack": 25,
+        "physical_defense": 8,
+        "magic_attack": 5,
+        "magic_defense": 5,
+        "speed": 25,
+        "enemy_exp": 25,
+        "enemy_gold": 18,
+        "scout_rate": 0.12,
+        "growth_rate": {
+            "HP": 1.1,
+            "MP": 1.0,
+            "Physical_Attack": 1.15,
+            "Physical_Defense": 1.05,
+            "Magic_Attack": 1.0,
+            "Magic_Defense": 1.0,
+            "Speed": 1.25
+        }
+    },
+    "コウモリ": {
+        "max_hp": 50,
+        "max_mp": 20,
+        "physical_attack":15,
+        "physical_defense": 5,
+        "magic_attack": 15,
+        "magic_defense": 10,
+        "speed": 30,
+        "enemy_exp": 15,
+        "enemy_gold": 10,
+        "scout_rate": 0.15,
+        "growth_rate": {
+            "HP": 1.05,
+            "MP": 1.15,
+            "Physical_Attack": 1.05,
+            "Physical_Defense": 1.05,
+            "Magic_Attack": 1.1,
+            "Magic_Defense": 1.1,
+            "Speed": 1.2
+        }
+    }
+}
