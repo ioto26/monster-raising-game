@@ -302,29 +302,6 @@ class Monster:
         if duration <= 0:
             return logs
             
-        # --- 状態異常の適用（毒・火傷など、継続ダメージ系） ---
-        if 'ailment' in skill_effect:
-            ailment_type = skill_effect['ailment'] # 例: 'poison' or 'burn'
-            chance = skill_effect.get('chance', 1.0) # 成功率
-            
-            if random.random() < chance:
-                
-                # 毒/火傷の詳細データ (Skill.pyのeffectから取得)
-                ailment_data = skill_effect.get('ailment_data', {})
-                
-                # 既に同じ状態異常にかかっている場合は、durationを更新
-                if ailment_type in self.status_effects:
-                    self.status_effects[ailment_type]['duration'] = duration
-                    logs.append(f"⚠️ {self.name}にかかっている{ailment_type}の持続時間が延長された！")
-                else:
-                    # 新しい状態異常の適用
-                    self.status_effects[ailment_type] = {
-                        'duration': duration,
-                        'type': 'ailment',
-                        'data': ailment_data
-                    }
-                    logs.append(f"⚠️ {self.name}は**{ailment_type}**状態になった！({duration}ターン)")
-            
         for key, value in skill_effect.items():
             # ステータスデバフの適用
             if key in ['physical_attack', 'physical_defense', 'magic_attack', 'magic_defense', 'speed', 'dodge_rate']:
@@ -341,25 +318,58 @@ class Monster:
                     
                 # モンスターのステータスに効果量を減算
                 setattr(self, key, getattr(self, key) - value)
-                print(f"🔽 {self.name}の{key}が{duration}ターン低下した！")
+                logs.append(f"⬇️ {self.name}の**{key}**が{value}下がった！")
 
-            # 状態異常の適用
-            if key == 'ailment_type':
-                if random.random() < skill_effect.get('ailment_chance', 0):
-                    ailment = random.choice(skill_effect['ailment_type']) # valueは ['confusion', 'stun']
-                    
-                    # 既に同じ状態異常にかかっている場合は、durationのみ更新する
-                    if self.has_ailment(ailment):
-                        self.status_effects[ailment]['duration'] = duration
-                        print(f"⚠️ {self.name}にかかっている{ailment}の持続時間が延長された！")
-                    else:
-                        # 状態異常にはoriginal_valueやamountは不要
-                        self.status_effects[ailment] = {
-                            'original_value': None,
-                            'duration': duration,
-                            'amount': None
-                        }
-                        print(f"⚠️ {self.name}は{ailment}状態になった！({duration}ターン)")
+    def apply_ailment_effect(self, skill_effect):
+        """
+        スキルエフェクトから状態異常を抽出し、モンスターに適用する。
+        """
+        
+        # typeが'ailment'でない場合は処理を終了
+        if skill_effect.get('type') != 'ailment':
+            return
+
+        # --- 必要な基本情報の取得 ---
+        # duration は必須情報なので、最初に取得
+        duration = skill_effect.get('duration', 0)
+        if duration <= 0:
+            return 
+            
+        chance = skill_effect.get('ailment_chance', 1.0) # 成功率
+        
+        # ailment_type はリストまたは単一の文字列を想定
+        ailment_candidates = skill_effect.get('ailment_type', [])
+        if not ailment_candidates:
+            return
+        
+        # --- 状態異常の適用判定 ---
+        if random.random() < chance:
+            
+            # 候補からランダムに1つの状態異常を選択 (リストで渡されている場合)
+            # 単一の文字列で渡された場合も random.choice はそのまま使える
+            if isinstance(ailment_candidates, list):
+                ailment = random.choice(ailment_candidates)
+            else:
+                ailment = ailment_candidates # 単一の文字列の場合
+                
+            # 状態異常の詳細データ（毒のダメージ量など）
+            ailment_data = skill_effect.get('ailment_data', {})
+            
+            
+            # --- 状態異常の適用処理 ---
+            
+            # 既に同じ状態異常にかかっているかチェック
+            # self.has_ailment(ailment) の代わりに直接 self.status_effects を確認
+            if ailment in self.status_effects:
+                # 既存のdurationを更新
+                self.status_effects[ailment]['duration'] = duration
+            else:
+                # 新しい状態異常の適用
+                self.status_effects[ailment] = {
+                    'duration': duration,
+                    'type': 'ailment', # この情報があることで、バフ・デバフと区別しやすい
+                    'data': ailment_data
+                }
 
     def has_ailment(self, ailment_type):
         """

@@ -1,6 +1,4 @@
 # Player.py
-import random
-from interface import get_management_menu_choice, get_monster_selection
 
 class Player:
     def __init__(self, name="主人公"):

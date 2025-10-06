@@ -3,12 +3,6 @@ import json # <- これを追加
 import os # <- これを追加 (ファイルの読み込みに必要)
 import sys # <- これを追加 (エラーハンドリングに必要)
 
-from interface import (
-    display_battle_start, 
-    display_battle_status, 
-    get_battle_command
-)
-
 class Battle:
     def __init__(self, player, enemy_monster):
         self.player = player
@@ -17,8 +11,6 @@ class Battle:
         self.participated_monsters = {self.current_monster} # 戦闘に参加したモンスターのセット
 
         self.config = self._load_config()
-
-        display_battle_start(self.enemy.name)
 
         self._apply_passive_start_of_battle_effects() # 戦闘開始時のパッシブスキル効果を適用
 
@@ -113,13 +105,17 @@ class Battle:
 
         if 'type' in skill.effect:
             
-            if 'buff' in skill.effect['type']:
+            if skill.effect.get('type') == 'buff':
                 user.apply_buff_effect(skill.effect)
                 logs.append(f"⬆️ {user.name}に強化効果がかかった！") 
 
-            if 'debuff' in skill.effect['type']:
-                target.apply_debuff_effect(skill.effect)
+            elif skill.effect.get('type') == 'debuff':
+                target.apply_debuff_effect(skill.effect) 
                 logs.append(f"⬇️ {target.name}に弱体効果がかかった！")
+                
+            elif skill.effect.get('type') == 'ailment':
+                target.apply_ailment_effect(skill.effect)
+                logs.append(f"⚠️ {target.name}に状態異常が付与された！")
             
         return logs
     
