@@ -200,11 +200,34 @@ class Battle:
 
     def process_enemy_turn(self):
         """
-        敵の行動を実行する (シンプルな攻撃のみ)
+        敵の行動を実行する
         """
-        current = self.current_monster
-        enemy = self.enemy
+        current = self.current_monster # プレイヤーのモンスター
+        enemy = self.enemy             # 敵のモンスター
         logs = []
+        
+        # --- 1. 行動阻害系の状態異常チェック ---
+        
+        # 状態異常の継続ターンを減少させる処理は、ターン開始時に別で実行されていることを想定
+        
+        # 💥 Stun (麻痺・行動不能) チェック
+        if 'stun' in enemy.status_effects:
+            logs.append(f"🥶 {enemy.name} は**麻痺**で体が動かない！")
+            # Stun 状態異常はターン終了時に持続ターンが減るため、ここでは行動をスキップするのみ
+            return logs, self.check_battle_status() # 行動をスキップしてターン終了
+            
+        # 😵 Confusion (混乱) チェック
+        if 'confusion' in enemy.status_effects:
+            # 混乱による自傷判定 (例: 50%の確率で自傷)
+            if random.random() < 0.5: 
+                damage = max(1, enemy.physical_attack // 3) # 自傷ダメージは弱めに設定
+                enemy.current_hp = max(0, enemy.current_hp - damage)
+                logs.append(f"😵 {enemy.name} は**混乱**し、自身に {damage} のダメージを与えてしまった！")
+                return logs, self.check_battle_status() # 行動終了
+            logs.append(f"🤯 {enemy.name} は**混乱**しているが、なんとか正気を取り戻した...")
+            # 混乱状態で正気を取り戻した場合は、通常の行動に進む
+
+        # --- 2. 通常の攻撃ロジック ---
         
         # 敵の攻撃ロジック
         damage = max(1, enemy.physical_attack - current.physical_defense // 2)
@@ -214,12 +237,12 @@ class Battle:
             damage = max(1, damage // 2)
             current.is_guarding = False # 防御状態を解除
             
-        # プレイヤーモンスターの回避判定 (ここではシンプルに実装)
+        # プレイヤーモンスターの回避判定
         if random.random() < current.dodge_rate:
-            logs.append(f"💨 {current.name}は {enemy.name} の攻撃を華麗に避けた！")
+            logs.append(f"💨 {current.name} は {enemy.name} の攻撃を華麗に避けた！")
         else:
             current.current_hp = max(0, current.current_hp - damage)
-            logs.append(f"💥 {enemy.name}は {current.name} に {damage} のダメージを与えた！")
+            logs.append(f"💥 {enemy.name} は {current.name} に {damage} のダメージを与えた！")
 
         return logs, self.check_battle_status()
     

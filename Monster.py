@@ -355,11 +355,9 @@ class Monster:
             # 状態異常の詳細データ（毒のダメージ量など）
             ailment_data = skill_effect.get('ailment_data', {})
             
-            
             # --- 状態異常の適用処理 ---
             
             # 既に同じ状態異常にかかっているかチェック
-            # self.has_ailment(ailment) の代わりに直接 self.status_effects を確認
             if ailment in self.status_effects:
                 # 既存のdurationを更新
                 self.status_effects[ailment]['duration'] = duration
@@ -370,13 +368,6 @@ class Monster:
                     'type': 'ailment', # この情報があることで、バフ・デバフと区別しやすい
                     'data': ailment_data
                 }
-
-    def has_ailment(self, ailment_type):
-        """
-        指定された状態異常にかかっているかチェックする
-        """
-        # status_effects 辞書に状態異常のキーがあるかを確認
-        return ailment_type in self.status_effects
 
     # --- 新しいメソッド: ターン終了時の効果処理 ---
     def process_turn_end_effects(self):
