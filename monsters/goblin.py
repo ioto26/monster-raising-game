@@ -9,7 +9,7 @@ from Skill import Skill, SkillNode, SkillTree
 # ゴブリンが持つ全てのスキルを辞書で定義します。
 goblin_skills = {
     'なげナイフ': Skill('なげナイフ', '遠距離攻撃', 'active', mp_cost=5, sp_cost=1, effect={"damage_type": "physical", "damage_multiplier": 1.2}),
-    'いたずら': Skill('いたずら', '敵に状態異常付与', 'active', mp_cost=8, sp_cost=2, effect={"type": "debuff", "ailment_chance": 0.8, "ailment_type": ["confusion", "stun"], "duration": 2}),
+    'いたずら': Skill('いたずら', '敵に状態異常付与', 'active', mp_cost=8, sp_cost=2, effect={"type": "ailment", "ailment_chance": 0.8, "ailment_type": ["confusion", "stun"], "duration": 2}),
     '連携攻撃': Skill('連携攻撃', '仲間と追加攻撃', 'passive', sp_cost=3, effect={"extra_attack_chance": 0.3, "trigger": "ally_attack"}),
     '隠密行動': Skill('隠密行動', '敵に発見されにくくなる', 'passive', sp_cost=4, effect={"stealth": True, "detection_rate": -0.2}),
     'リーダーシップ': Skill('リーダーシップ', '仲間の攻撃力上昇', 'passive', sp_cost=5, effect={"type": "buff", "physical_attack": 5, "duration": 3}),
